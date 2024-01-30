@@ -34,8 +34,9 @@ To understand which group has higher or lower ranks (which might be interpreted 
 
 ```python 
 import scipy.stats as stats
-# T-test
-t_score, p_t = stats.ttest_ind(data1, data2)
+# T-test (https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html)
+# If equal_var is True (default), perform a standard independent 2 sample test that assumes equal population variances. If False, perform Welch’s t-test, which does not assume equal population variance .
+t_score, p_t = stats.ttest_ind(data1, data2, equal_var=False)
 
 # U-Test
 u_score, p_u = stats.mannwhitneyu(data1, data2)
@@ -58,9 +59,9 @@ sdg661.ipynb # test and results analysis
 
 ## Results
 outputs_delta/ \
-├── Pemanent_water_delta_2017_allThd.csv (<sup><sub>thresholding 2017-2021 delta with the mean and std from baseline periods 2000-2019</sup></sub>)\
-├── Pemanent_water_delta_2017_thd.csv (<sup><sub>thresholding 2017-2021 detla with the mean and std from 2017-2021 report period</sup></sub>) \
-├── Pemanent_water_delta.csv (<sup><sub>thresholding all periods' delta with the mean and std from baseline periods 2000-2019</sup></sub>) \
+├── Pemanent_water_delta_2017_allThd.csv <sup><sub>(thresholding 2017-2021 delta with the mean and std from baseline periods 2000-2019)</sup></sub>\
+├── Pemanent_water_delta_2017_thd.csv <sup><sub>(thresholding 2017-2021 detla with the mean and std from 2017-2021 report period)</sup></sub> \
+├── Pemanent_water_delta.csv <sup><sub>(thresholding all periods' delta with the mean and std from baseline periods 2000-2019)</sup></sub> \
 ├── Reservoirs_delta_2017_allThd.csv \
 ├── Reservoirs_delta_2017_thd.csv \
 ├── Reservoirs_delta.csv 

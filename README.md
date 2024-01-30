@@ -52,7 +52,7 @@ u_score = median_diff / np.abs(median_diff) * u_score
 python convert_gaul_0_data.py 
 
 python sdg661_delta.py # generate delta csv
-python sdg661_ttest.py # generate ttest (utest) csv
+python sdg661_utest.py # generate ttest (utest) csv
 
 sdg661.ipynb # test and results analysis
 ```

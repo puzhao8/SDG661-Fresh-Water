@@ -1,13 +1,16 @@
 # SDG661-Fresh-Water
+This project aims to analyze the temporal changes of pemanenet water and resovoirs at various basin levels.
 
 ## Delta Methods: Relative Changes 
 Evaluate the relative changes between the report period (2017-2021) and baseline (2000-2019) 
 
-$\delta = \frac{\gamma-\beta}{\beta}$ * 100 \
+$\delta = \frac{\gamma-\beta}{\beta + \epsilon}$ * 100 \
 where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma$ denotes the median spatial extent for the report period (2017-2019). 
+To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-15}$ by default.
 
-$\delta_{low\_thd} = \mu - \alpha * \sigma$ \
-$\delta_{high\_thd} = \mu + \alpha * \sigma$ \
+Low and high thresholds based on $\mu$ and $\sigma$: \
+$\delta_{low.thd} = \mu - \alpha * \sigma$ \
+$\delta_{high.thd} = \mu + \alpha * \sigma$ \
 where $\mu$ and $\sigma$ denote the mean and standard deviation respectively, and $\alpha \in [0.5, 1, 1.5, 2, 2.5, 3, 4, 5]$.
 
 ## U-Test (or T-Test) Methods
@@ -42,22 +45,29 @@ median_diff = median2 - median1
 u_score = median_diff / np.abs(median_diff) * u_score
 ```
 
+## codes
+```python 
+# convert gaul_0 input data into same format as the other basin levels (3-8).
+python convert_gaul_0_data.py 
+
+python sdg661_delta.py # generate delta csv
+python sdg661_ttest.py # generate ttest (utest) csv
+
+sdg661.ipynb # test and results analysis
+```
+
 ## Results
-project/
-│
-├── README.md
-├── data/
-│   ├── dataset1.csv
-│   └── dataset2.csv
-│
-├── src/
-│   ├── script1.py
-│   ├── script2.py
-│   └── utils/
-│       ├── helper.py
-│       └── test.py
-│
-└── output/
-    ├── results.txt
-    └── logs/
-        └── log1.txt
+outputs_delta/ \
+├── Pemanent_water_delta_2017_allThd.csv (thresholding 2017-2021 delta with the mean and std from baseline periods 2000-2019)\
+├── Pemanent_water_delta_2017_thd.csv (thresholding 2017-2021 detla with the mean and std from 2017-2021 report period) \
+├── Pemanent_water_delta.csv (thresholding all periods' delta with the mean and std from baseline periods 2000-2019) \
+├── Reservoirs_delta_2017_allThd.csv \
+├── Reservoirs_delta_2017_thd.csv \
+├── Reservoirs_delta.csv 
+
+outputs_ttest/ \
+├── Pemanent_water_ttest_2017.csv (u-test and t-test results)\
+├── Reservoirs_ttest_2017.csv (u-test and t-test results)
+
+
+

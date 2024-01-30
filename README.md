@@ -37,7 +37,7 @@ import scipy.stats as stats
 # T-test (https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html)
 # If equal_var is True (default), perform a standard independent 2 sample test that assumes equal population variances. If False, perform Welch’s t-test, which does not assume equal population variance .
 # T-test
-t_score, p_t = stats.ttest_ind(report_period, baseline_period)
+t_score, p_t = stats.ttest_ind(report_period, baseline_period, equal_var=False)
 
 # U-Test
 u_score, p_u = stats.mannwhitneyu(report_period, baseline_period)
@@ -52,12 +52,12 @@ p_u_thd = float(p_u < p_thd) # p_thd = 0.01 by default
 ## codes
 ```python 
 # convert gaul_0 input data into same format as the other basin levels (3-8).
-python convert_gaul_0_data.py 
+python step0_convert_gaul_0_data.py 
 
-python sdg661_delta.py # generate delta csv
-python sdg661_utest.py # generate ttest (utest) csv
+python step1_sdg661_delta.py # generate delta csv
+python step2_sdg661_utest.py # generate ttest (utest) csv
 
-sdg661.ipynb # test and results analysis
+step3_analyze_results.ipynb # test and results analysis
 ```
 
 ## Results
@@ -68,10 +68,6 @@ outputs_delta/ \
 ├── Reservoirs_delta_2017_allThd.csv \
 ├── Reservoirs_delta_2017_thd.csv \
 ├── Reservoirs_delta.csv 
-
-outputs_ttest (p_th = 0.001 by deafult)/  \
-├── Pemanent_water_ttest_2017.csv (u-test and t-test results)\
-├── Reservoirs_ttest_2017.csv (u-test and t-test results)
 
 outputs_utest (p_th = 0.01 by deafult) / \
 ├── Pemanent_water_utest_2017.csv (u-test and t-test results)\

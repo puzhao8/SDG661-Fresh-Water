@@ -69,9 +69,13 @@ outputs_delta/ \
 ├── Reservoirs_delta_2017_thd.csv \
 ├── Reservoirs_delta.csv 
 
-outputs_ttest/ \
+outputs_ttest (p_th = 0.001 by deafult)/  \
 ├── Pemanent_water_ttest_2017.csv (u-test and t-test results)\
 ├── Reservoirs_ttest_2017.csv (u-test and t-test results)
+
+outputs_utest (p_th = 0.01 by deafult) / \
+├── Pemanent_water_utest_2017.csv (u-test and t-test results)\
+├── Reservoirs_utest_2017.csv (u-test and t-test results)
 
 
 

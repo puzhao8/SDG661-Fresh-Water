@@ -36,14 +36,17 @@ To understand which group has higher or lower ranks (which might be interpreted 
 import scipy.stats as stats
 # T-test (https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html)
 # If equal_var is True (default), perform a standard independent 2 sample test that assumes equal population variances. If False, perform Welch’s t-test, which does not assume equal population variance .
-t_score, p_t = stats.ttest_ind(data1, data2, equal_var=False)
+# T-test
+t_score, p_t = stats.ttest_ind(report_period, baseline_period)
 
 # U-Test
-u_score, p_u = stats.mannwhitneyu(data1, data2)
-median2 = np.median(data2)
-median1 = np.median(data1)
-median_diff = median2 - median1
+u_score, p_u = stats.mannwhitneyu(report_period, baseline_period)
+median_report = np.median(report_period)
+median_baseline = np.median(baseline_period)
+median_diff = median_report - median_baseline
 u_score = median_diff / np.abs(median_diff) * u_score
+
+p_u_thd = float(p_u < p_thd) # p_thd = 0.01 by default
 ```
 
 ## codes

@@ -5,7 +5,7 @@ This project aims to analyze the temporal changes of pemanenet water and resovoi
 Evaluate the relative changes between the report period (2017-2021) and baseline (2000-2019) 
 
 $\delta = \frac{\gamma-\beta}{\beta + \epsilon}$ * 100 \
-where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma$ denotes the median spatial extent for the report period (2017-2019). 
+where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma$ denotes the median spatial extent for the report period (2017-2021). 
 To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-15}$ by default.
 
 Low and high thresholds based on $\mu$ and $\sigma$: \

@@ -3,5 +3,5 @@ data
 Pemanent_water/*
 Reservoirs/*
 .ipynb_checkpoints/*
-outputs_ttest/.ipynb_checkpoints/*
-outputs_delta/.ipynb_checkpoints/*
+outputs_ttest
+outputs_delta

@@ -9,11 +9,14 @@ dtypes = {"aggregation_year": 'uint16',"permanent_area": 'float64',"seasonal_are
           "maybepermanent": 'float64',"maybeseasonal": 'float64'
          }
 
-data_dir = Path.home() / 'pz'
-cols_required = ['permanent_area', 
-                 # 'seasonal_area'
-                #  'maybepermanent', 'maybeseasonal'
-                ]
+data_dir = Path('data')
+COL_NAME = 'seasonal_area'
+cols_required = [
+    COL_NAME
+    # 'permanent_area', 
+    # 'seasonal_area'
+    #  'maybepermanent', 'maybeseasonal'
+    ]
 arr_mean_std = []
 
 meta = {'id_bgl': 'object', 'start_year': int, 'basin_level': int} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
@@ -42,7 +45,7 @@ def calculate_delta(group, basin_level, epision=1e-15):
     return df_delta
 
 def remove_outliers(df, p_low, p_high):
-    for col in ['permanent_area']:
+    for col in [COL_NAME]:
         select = (df[col] > p_low[col]) & (df[col] < p_high[col])
         # select = (df[col] < p_high[col])
         df = df[select]
@@ -57,14 +60,13 @@ if __name__ == '__main__':
     cluster = LocalCluster(dashboard_address=':38787')
     client = Client(cluster)#timeout
     
-    folder = "Pemanent_water" # Reservoirs, Pemanent_water
+    folder = "Reservoirs" # Reservoirs, Pemanent_water
     epision = 1e-15
     
     p_low = 2 # remove lowest 1%
     p_high = 98 # remove highest 4%
     
-    
-    output_dir = data_dir / f"outputs_delta" / folder
+    output_dir = Path(COL_NAME) / f"outputs_delta" / folder
     output_dir.mkdir(exist_ok=True, parents=True)
     print(output_dir)
     
@@ -81,20 +83,20 @@ if __name__ == '__main__':
         df_delta.to_csv(output_dir / f"basins_level_{basin_level}_ts_delta.csv")
     
         # remove the rows where delta > 100, since we assume that this may be caused by the case when  
-        df_delta = df_delta[df_delta['permanent_area'] <= 100]        
+        df_delta = df_delta[df_delta[COL_NAME] <= 100]        
         p_low_value = df_delta[cols_required].quantile(p_low * 0.01)#.compute()
         p_high_value = df_delta[cols_required].quantile(p_high * 0.01)#.compute()
     
         print(f"--------------------------------- basin_level: {basin_level}-----------------------------------")
-        print(f"p_low_value: {p_low_value['permanent_area']}")
-        print(f"p_high_value: {p_high_value['permanent_area']}")
+        print(f"p_low_value: {p_low_value[COL_NAME]}")
+        print(f"p_high_value: {p_high_value[COL_NAME]}")
         
         df = remove_outliers(df_delta, p_low_value, p_high_value)
         print()
         print(df.describe())
         
         # df_delta.visualize('test.png')
-        df.to_csv(output_dir / f"basins_level_{basin_level}_ts_delta_outliers_removed.csv")
+        # df.to_csv(output_dir / f"basins_level_{basin_level}_ts_delta_outliers_removed.csv")
     
         # save hist
         import matplotlib.pyplot as plt

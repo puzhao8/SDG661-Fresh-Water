@@ -16,24 +16,30 @@ dtypes = {"aggregation_year": 'uint16', "permanent_area": 'float64',
           "maybeseasonal": 'float64'
          }
 
-
-cols_required = ['permanent_area', 
-                 # 'seasonal_area'
-                #  'maybepermanent', 'maybeseasonal'
+COL_NAME = "seasonal_area" # permanent_area
+cols_required = [
+    COL_NAME
+    # 'permanent_area', 
+    # 'seasonal_area'
+    #  'maybepermanent', 'maybeseasonal'
                 ]
 
 
 
-meta = {'id': 'str', 't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 'p_u_thd_0.01': 'bool'} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
-meta_adm0 = {'id': 'str', 'adm0_name': 'str', 't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 'p_u_thd_0.01': 'bool'} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
+meta = {'id_bgl': 'str', 
+        'basin_level': int, 'start_year': int, 
+        't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 
+        'sign_diff': 'float', 'delta': 'float'
+       }
+# meta_adm0 = {'id': 'str', 'adm0_name': 'str', 't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 'delta': 'float'} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
 # meta.update({col: 'float16' for col in cols_required})
 
-def t_test_and_u_test(group, p_thd = 0.01):
+def t_test_and_u_test(group, basin_level):
     id = group.index[0] # basin_id
     
     patch = group[(group.index == id) & (group['aggregation_year']  >=2000)]
-    baseline_period = list(patch[patch['aggregation_year'] < 2020]['permanent_area'].values)
-    report_period = list(patch[patch['aggregation_year'] >= 2017]['permanent_area'].values)
+    baseline_period = list(patch[patch['aggregation_year'] < 2020][COL_NAME].values)
+    report_period = list(patch[patch['aggregation_year'] >= 2017][COL_NAME].values)
 
     # T-test
     t_score, p_t = stats.ttest_ind(report_period, baseline_period,  equal_var=False)
@@ -43,11 +49,14 @@ def t_test_and_u_test(group, p_thd = 0.01):
     median_report = np.median(report_period)
     median_baseline = np.median(baseline_period)
     median_diff = median_report - median_baseline
-    u_score = median_diff / np.abs(median_diff) * u_score
+    sign_diff = median_diff / np.abs(median_diff)
 
-    p_u_thd = float(p_u < p_thd)
+    # delta
+    delta = (median_report - median_baseline) / (median_baseline + 1e-15) * 100
 
-    df = pd.DataFrame([[id, t_score, u_score, p_t, p_u, p_u_thd]], columns=['id', 't_score', 'u_score', 'p_t', 'p_u', 'p_u_thd_0.01'])
+    # p_u_thd = float(p_u < p_thd)
+    df = pd.DataFrame([[id, basin_level, 2017, t_score, u_score, p_t, p_u, sign_diff, delta]], 
+                    columns=['id_bgl', 'basin_level', 'start_year', 't_score', 'u_score', 'p_t', 'p_u', 'sign_diff', 'delta'])
     return df
 
 
@@ -62,7 +71,7 @@ if __name__ == '__main__':
     
     for folder in ["Pemanent_water", "Reservoirs"]: # Reservoirs, Pemanent_water
     
-        output_dir = f"outputs_utest" / folder
+        output_dir = Path(COL_NAME) / "outputs_utest" / folder
         output_dir.mkdir(exist_ok=True, parents=True)
         print(output_dir)
     
@@ -81,7 +90,7 @@ if __name__ == '__main__':
             # t_test_and_u_test(df_delta.get_group("112_262").compute(), basin_level)
         
             # df_delta = basin.groupby(f'id_bgl_{basin_level}', group_keys=False).apply(calculate_delta, basin_level, epision, meta=meta)
-            df_delta = basin.groupby(f'id_bgl_{basin_level}', group_keys=False).apply(t_test_and_u_test, meta=meta).set_index('id')
+            df_utest = basin.groupby(f'id_bgl_{basin_level}', group_keys=False).apply(t_test_and_u_test, basin_level, meta=meta).set_index('id_bgl')
            
-            df_delta = df_delta.compute()
-            df_delta.to_csv(output_dir / f"basins_level_{basin_level}_utest.csv")
+            df_utest = df_utest.compute()
+            df_utest.to_csv(output_dir / f"basins_level_{basin_level}_utest.csv")

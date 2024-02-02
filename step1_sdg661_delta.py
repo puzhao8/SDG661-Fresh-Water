@@ -66,7 +66,7 @@ if __name__ == '__main__':
     p_low = 2 # remove lowest 1%
     p_high = 98 # remove highest 4%
     
-    output_dir = Path(COL_NAME) / f"outputs_delta" / folder
+    output_dir = Path("outputs_delta") / folder / COL_NAME 
     output_dir.mkdir(exist_ok=True, parents=True)
     print(output_dir)
     

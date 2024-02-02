@@ -71,7 +71,7 @@ if __name__ == '__main__':
     
     for folder in ["Pemanent_water", "Reservoirs"]: # Reservoirs, Pemanent_water
     
-        output_dir = Path(COL_NAME) / "outputs_utest" / folder
+        output_dir = Path("outputs_utest") / folder / COL_NAME 
         output_dir.mkdir(exist_ok=True, parents=True)
         print(output_dir)
     

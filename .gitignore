@@ -5,3 +5,4 @@ Reservoirs/*
 .ipynb_checkpoints/*
 outputs_ttest
 outputs_delta
+outputs_diff

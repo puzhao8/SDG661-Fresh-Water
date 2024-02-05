@@ -6,12 +6,12 @@ import warnings
 warnings.filterwarnings("ignore")
 
 """ configuration """
-folder = 'Reservoirs' # Permanent_water, Reservoirs
+folder = 'Permanent_water' # Permanent_water, Reservoirs
 area = 'seasonal_area' # permanent_area, seasonal_area
 
 basin_level = 6 # basin level
 alpha = 2 # mean +/- alpha * std
-for alpha in [1,2,3]:
+for alpha in [2.5]:
     p_thd = 0.05
     save_flag = True 
 
@@ -121,8 +121,8 @@ for alpha in [1,2,3]:
             save_url = maps_dir / f'delta_alpha_{alpha}.png'
             
         if 'u_sign' == col: # utest
-            title = f'{folder}/{area}: u_test (p={p_thd:.2f}, masked basins where delta = 0)'
-            save_url = maps_dir / f'utest_p_{p_thd:.2f}.png'
+            title = f'{folder}/{area}: u_test (p={p_thd:.3f}, masked basins where delta = 0)'
+            save_url = maps_dir / f'utest_p_{p_thd:.3f}.png'
 
         plt.tight_layout()
         ax.set_title(title)

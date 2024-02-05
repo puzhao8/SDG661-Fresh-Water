@@ -69,9 +69,18 @@ outputs_delta/ \
 ├── Reservoirs_delta_2017_thd.csv \
 ├── Reservoirs_delta.csv 
 
-outputs_utest (p_th = 0.01 by deafult) / \
-├── Pemanent_water_utest_2017.csv (u-test and t-test results)\
-├── Reservoirs_utest_2017.csv (u-test and t-test results)
+outputs_utest (p_th = 0.05 by deafult) / \
+├── Permanent_water
+├──────── permanent_area
+├────────────── basins_level_4_utest.csv
+├──────── seasonal_area
+├────────────── basins_level_4_utest.csv
+├── Reservoirs
+├──────── permanent_area
+├──────── seasonal_area
+
+
+note: p_u < p_thd (0.05 by default) determines a basin changes or not (True for change, False for non-change), while u_sign determines the change direction, where 0 denotes neutral (delta = 0).
 
 
 

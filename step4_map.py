@@ -13,6 +13,11 @@ save_flag = True
 
 basin_level = 6 # basin level
 alpha = 1.5 # mean +/- alpha * std
+
+df = pd.DataFrame([], columns=['folder', 'area', 'basin_level', 'alpha', 'p_thd', 'num_of_masked_basins', 
+                                        'thd_low', 'thd_high', 'method', 'neg', 'stable', 'pos'])
+df.to_csv('maps/maps.csv', mode='w')
+
 for alpha in [0.5, 1, 1.5, 2]:
     for p_thd in [0.01, 0.02, 0.025, 0.05]:
 
@@ -53,7 +58,7 @@ for alpha in [0.5, 1, 1.5, 2]:
 
         # p_thd = 0.05
         # min_area_thd = 0.01 
-        u_test = pd.read_csv(f"outputs_utest_V1/{folder}/{area}/basins_level_{basin_level}_utest.csv")
+        u_test = pd.read_csv(f"outputs_utest/{folder}/{area}/basins_level_{basin_level}_utest.csv")
         u_test['u_flag'] = u_test['p_u'].transform(lambda x: float(x < p_thd)) # u_flag determines whether a basin change or not
 
         # u_test['u_sign'] = u_test['delta'].transform(lambda x: get_u_sign(x))
@@ -89,7 +94,8 @@ for alpha in [0.5, 1, 1.5, 2]:
         # delta_u
 
         print(f"after applying masked_basins: {delta_u.shape[0]}")
-        print(f"number of masked basins: {num_before_basin_masking - delta_u.shape[0]}")
+        num_of_masked_basins = num_before_basin_masking - delta_u.shape[0]
+        print(f"number of masked basins: {num_of_masked_basins}")
 
 
         #%% Map Product
@@ -126,11 +132,11 @@ for alpha in [0.5, 1, 1.5, 2]:
         masked_basins = gpd.read_file("data\Masked__basins\SNow_Arid_Mask.shp").to_crs('+proj=robin')
         gdf_join = gdf_join[~gdf_join['PFAF_ID'].isin(list(masked_basins['PFAF_ID_6'].unique()))]
 
-        maps_dir = Path('maps_V1') / folder / area
+        maps_dir = Path('maps') / folder / area
         maps_dir.mkdir(exist_ok=True, parents=True)
 
         for col in ['sign', 'u_sign']: # 'sign', 'u_sign'
-            fig, ax = plt.subplots(figsize=(12, 5))
+            fig, ax = plt.subplots(figsize=(12, 6))
             gdf_join.plot(ax=ax, column=col, cmap=my_colormap, vmin=-1, vmax=1)
             # gdf_join.to_crs('+proj=eck4').plot(ax=ax, column='permanent_area', cmap=my_colormap, vmin=-100, vmax=100)
             # masked_basins.plot(ax=ax, color='white', edgecolor='white', linewidth=0.5)
@@ -140,16 +146,21 @@ for alpha in [0.5, 1, 1.5, 2]:
             stable = gdf_join[gdf_join[col] == 0].shape[0]
             pos = gdf_join[gdf_join[col] == 1].shape[0]
 
+            if 'sign' == col:
+                row_single = [folder, area, basin_level, alpha, p_thd, num_of_masked_basins, thd_low, thd_high, 'delta', neg, stable, pos]
+            
+            if 'u_sign' == col:
+                row_single = [folder, area, basin_level, alpha, p_thd, num_of_masked_basins, thd_low, thd_high, 'utest', neg, stable, pos]
+
             print()
             print(f"neg: {neg}, stable: {stable}, pos: {pos}")
 
             if 'sign' == col: # delta
-                title = f'{folder}/{area}: delta (with {alpha} std thresholds)'
+                title = f'{folder}/{area}: delta ({thd_low:.2f}% <= delta <= {thd_high:.2f}%)'
                 save_url = maps_dir / f'delta_alpha_{alpha}.png'
                 
             if 'u_sign' == col: # utest
-                title = f'{folder}/{area}: u_test (p={p_thd:.3f}, with delta mask) \n 
-                    masked basins where {thd_low:.2f}% <= delta <= {thd_high:.2f}%) or baseline < 0.025 sq km'
+                title = f"{folder}/{area}: u_test (p={p_thd:.3f}, with delta mask) \n masked basins where {thd_low:.2f}% <= delta <= {thd_high:.2f}%) or baseline < 0.025 sq km"
                 save_url = maps_dir / f'utest_p_{p_thd:.3f}_a_{alpha:.1f}.png'
 
 
@@ -166,4 +177,7 @@ for alpha in [0.5, 1, 1.5, 2]:
             if save_flag: fig.savefig(save_url, dpi=300)
             print()
             
-
+        
+            df = pd.DataFrame([row_single], columns=['folder', 'area', 'basin_level', 'alpha', 'p_thd', 'num_of_masked_basins', 
+                                        'thd_low', 'thd_high', 'method', 'neg', 'stable', 'pos'])
+            df.to_csv('maps/maps.csv', mode='a', header=False)

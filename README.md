@@ -36,18 +36,31 @@ To understand which group has higher or lower ranks (which might be interpreted 
 import scipy.stats as stats
 # T-test (https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.ttest_ind.html)
 # If equal_var is True (default), perform a standard independent 2 sample test that assumes equal population variances. If False, perform Welch’s t-test, which does not assume equal population variance .
+
 # T-test
 t_score, p_t = stats.ttest_ind(report_period, baseline_period, equal_var=False)
 
-# U-Test
-u_score, p_u = stats.mannwhitneyu(report_period, baseline_period)
-median_report = np.median(report_period)
-median_baseline = np.median(baseline_period)
-median_diff = median_report - median_baseline
-u_score = median_diff / np.abs(median_diff) * u_score
+def get_sign(x):
+    if x > 0: return 1
+    elif x < 0: return -1
+    else: return 0
 
-p_u_thd = float(p_u < p_thd) # p_thd = 0.01 by default
+# U-Test
+median_baseline = np.median(baseline_period)
+median_report = np.median(report_period)
+median_diff = median_report - median_baseline
+
+# delta
+delta = median_diff / (median_baseline + 1e-15) * 100
+
+u_sign = get_sign(median_diff)
+dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
+if dry_mask & (median_diff != 0): u_sign = -99
 ```
+
+p_u < p_thd (0.05 by default) determines a basin changes or not (True for change, False for non-change), while u_sign determines the change direction, 1 for positive, -1 for negative, 0 for neutral (delta = 0), and -99 for dry basins.
+
+It is worth noting that the u_test was set to be non-change/neutral if |delta| < 10(%) (a specified threshold, which could also be determined using mean and std, e.g., $\mu - \alpha * \sigma \leq delta \leq \mu + \alpha * \sigma$) since we trust more in delta-based approach for determining the non-change basins.
 
 ## codes
 ```python 
@@ -60,16 +73,11 @@ python step2_sdg661_utest.py # generate ttest (utest) csv
 step3_analyze_results.ipynb # test and results analysis
 ```
 
-## Results
-outputs_delta/ \
-├── Pemanent_water_delta_2017_allThd.csv <sup><sub>(thresholding 2017-2021 delta with the mean and std from baseline periods 2000-2019)</sup></sub>\
-├── Pemanent_water_delta_2017_thd.csv <sup><sub>(thresholding 2017-2021 detla with the mean and std from 2017-2021 report period)</sup></sub> \
-├── Pemanent_water_delta.csv <sup><sub>(thresholding all periods' delta with the mean and std from baseline periods 2000-2019)</sup></sub> \
-├── Reservoirs_delta_2017_allThd.csv \
-├── Reservoirs_delta_2017_thd.csv \
-├── Reservoirs_delta.csv 
 
-outputs_utest (p_th = 0.05 by deafult) / \
+
+## Results
+
+outputs_utest (with delta non-change masking) / \
 ├── Permanent_water \
 ├───── permanent_area\
 ├────────── basins_level_4_utest.csv\
@@ -79,10 +87,12 @@ outputs_utest (p_th = 0.05 by deafult) / \
 ├───── permanent_area\
 ├───── seasonal_area\
 
+Map folder includes global maps.
 
-note: p_u < p_thd (0.05 by default) determines a basin changes or not (True for change, False for non-change), while u_sign determines the change direction, where 0 denotes neutral (delta = 0).
 
 
-lumi
-eval "$(ssh-agent -s)"
+```python 
+# LUMI
+eval "$(ssh-agent -s)" \
 ssh-add ~/.ssh/id_ed25519
+```

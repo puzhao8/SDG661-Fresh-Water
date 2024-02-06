@@ -43,6 +43,13 @@ meta = {'id_bgl': 'str',
 # meta_adm0 = {'id': 'str', 'adm0_name': 'str', 't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 'delta': 'float'} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
 # meta.update({col: 'float16' for col in cols_required})
 
+def get_sign(x):
+    if x > 0: return 1
+    elif x < 0: return -1
+    else: return 0
+    
+
+
 def t_test_and_u_test(group, basin_level):
     id = group.index[0] # basin_id
     
@@ -61,11 +68,11 @@ def t_test_and_u_test(group, basin_level):
     median_diff = median_report - median_baseline
 
     # delta
-    delta = median_diff / (median_baseline + 1e-5) * 100
+    delta = median_diff / (median_baseline + 1e-15) * 100
 
-    u_sign = int(round(median_diff / (np.abs(median_diff + 1e-5))))
     dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
     if dry_mask: u_sign = -99
+    u_sign = get_sign(median_diff)
 
     # p_u_thd = float(p_u < p_thd)
     df = pd.DataFrame([[id, basin_level, 2017, t_score, p_t, u_score, p_u, median_baseline, delta, u_sign]], 

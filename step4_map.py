@@ -56,7 +56,7 @@ def get_u_sign(delta_value):
 u_test = pd.read_csv(f"outputs_utest/{folder}/{area}/basins_level_{basin_level}_utest.csv")
 u_test['u_flag'] = u_test['p_u'].transform(lambda x: float(x < p_thd)) # u_flag determines whether a basin change or not
 
-u_test['u_sign'] = u_test['delta'].transform(lambda x: get_u_sign(x))
+# u_test['u_sign'] = u_test['delta'].transform(lambda x: get_u_sign(x))
 # u_test['u_sign'][u_test['baseline_median'] < min_area_thd] = -99
 u_test['u_sign'][u_test['u_sign'] == -99] = 0
 u_test['u_sign'] = u_test['u_sign'] * u_test['u_flag']

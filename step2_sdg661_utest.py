@@ -64,7 +64,7 @@ def t_test_and_u_test(group, basin_level):
     delta = median_diff / (median_baseline + 1e-5) * 100
 
     u_sign = int(round(median_diff / (np.abs(median_diff + 1e-5))))
-    dry_mask = median_baseline < 0.025 # dry basin if true, precision=0.025
+    dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
     if dry_mask: u_sign = -99
 
     # p_u_thd = float(p_u < p_thd)
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     data_dir =  Path('data')
     arr_mean_std = []
     
-    for folder in ["Pemanent_water", "Reservoirs"]: # Reservoirs, Pemanent_water
+    for folder in ["Permanent_water", "Reservoirs"]: # Reservoirs, Pemanent_water
     
         output_dir = Path("outputs_utest_V1") / folder / COL_NAME
         output_dir.mkdir(exist_ok=True, parents=True)

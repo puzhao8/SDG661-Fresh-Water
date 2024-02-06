@@ -10,13 +10,15 @@ import scipy.stats as stats
 import warnings
 warnings.filterwarnings("ignore")
 
-dtypes = {"aggregation_year": 'uint16', "permanent_area": 'float64',
-          "seasonal_area": 'float64',
-          "maybepermanent": 'float64',
-          "maybeseasonal": 'float64'
-         }
+dtypes = {
+    "aggregation_year": 'uint16', 
+    "permanent_area": 'float64',
+    "seasonal_area": 'float64',
+    "maybepermanent": 'float64',
+    "maybeseasonal": 'float64'
+}
 
-COL_NAME = "seasonal_area" # permanent_area
+COL_NAME = "seasonal_area" # permanent_area, seasonal_area
 cols_required = [
     COL_NAME
     # 'permanent_area', 
@@ -27,10 +29,17 @@ cols_required = [
 
 
 meta = {'id_bgl': 'str', 
-        'basin_level': int, 'start_year': int, 
-        't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 
-        'sign_diff': 'float', 'delta': 'float'
+        'basin_level': int, 
+        'start_year': int, 
+        't_score': 'float', 
+        'p_t': 'float', 
+        'u_score': 'float', 
+        'p_u': 'float', 
+        'baseline_median': float,
+        'delta': float,
+        'u_sign': int, 
        }
+
 # meta_adm0 = {'id': 'str', 'adm0_name': 'str', 't_score': 'float', 'u_score': 'float', 'p_t': 'float', 'p_u': 'float', 'delta': 'float'} #'id_bgl': 'object', 'start_year': int, 'basin_level': int
 # meta.update({col: 'float16' for col in cols_required})
 
@@ -46,22 +55,27 @@ def t_test_and_u_test(group, basin_level):
 
     # U-Test
     u_score, p_u = stats.mannwhitneyu(report_period, baseline_period)
-    median_report = np.median(report_period)
+    
     median_baseline = np.median(baseline_period)
+    median_report = np.median(report_period)
     median_diff = median_report - median_baseline
-    sign_diff = median_diff / np.abs(median_diff)
 
     # delta
-    delta = (median_report - median_baseline) / (median_baseline + 1e-15) * 100
+    delta = median_diff / (median_baseline + 1e-5) * 100
+
+    u_sign = int(round(median_diff / (np.abs(median_diff + 1e-5))))
+    dry_mask = median_baseline < 0.025 # dry basin if true, precision=0.025
+    if dry_mask: u_sign = -99
 
     # p_u_thd = float(p_u < p_thd)
-    df = pd.DataFrame([[id, basin_level, 2017, t_score, u_score, p_t, p_u, sign_diff, delta]], 
-                    columns=['id_bgl', 'basin_level', 'start_year', 't_score', 'u_score', 'p_t', 'p_u', 'sign_diff', 'delta'])
+    df = pd.DataFrame([[id, basin_level, 2017, t_score, p_t, u_score, p_u, median_baseline, delta, u_sign]], 
+                columns=['id_bgl', 'basin_level', 'start_year', 't_score', 'p_t', 'u_score', 'p_u', 'baseline_median', 'delta', 'u_sign'])
     return df
 
 
 
 if __name__ == '__main__':
+
     from dask.distributed import Client, LocalCluster
     cluster = LocalCluster(dashboard_address=':38787')
     client = Client(cluster)#timeout
@@ -71,7 +85,7 @@ if __name__ == '__main__':
     
     for folder in ["Pemanent_water", "Reservoirs"]: # Reservoirs, Pemanent_water
     
-        output_dir = Path("outputs_utest") / folder / COL_NAME 
+        output_dir = Path("outputs_utest_V1") / folder / COL_NAME
         output_dir.mkdir(exist_ok=True, parents=True)
         print(output_dir)
     

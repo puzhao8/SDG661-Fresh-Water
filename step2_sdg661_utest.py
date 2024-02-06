@@ -70,9 +70,10 @@ def t_test_and_u_test(group, basin_level):
     # delta
     delta = median_diff / (median_baseline + 1e-15) * 100
 
-    dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
-    if dry_mask: u_sign = -99
     u_sign = get_sign(median_diff)
+    dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
+    if dry_mask & (median_diff != 0): u_sign = -99
+    
 
     # p_u_thd = float(p_u < p_thd)
     df = pd.DataFrame([[id, basin_level, 2017, t_score, p_t, u_score, p_u, median_baseline, delta, u_sign]], 

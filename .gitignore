@@ -7,5 +7,5 @@ outputs_ttest
 outputs_delta
 outputs_diff
 outputs_utest_V0
-maps
-maps_V1
+maps/*
+maps_V1/*

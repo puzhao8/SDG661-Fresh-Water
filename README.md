@@ -66,7 +66,7 @@ It is worth noting that the u_test was set as non-change/neutral if $\mu - \alph
 
 decision = (p_u < p_thd) & (not $\delta_{low\_thd} \leq \delta \leq \delta_{high\_thd}$) * (u_sign.where(u_sign == -99, 0))
 
-![image](figures\csv_screenshot.png)
+![image](https://github.com/puzhao8/SDG661-Fresh-Water/blob/main/figures/csv_screenshot.png)
 
 
 ## codes

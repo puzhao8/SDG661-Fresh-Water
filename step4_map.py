@@ -7,8 +7,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 """ configuration """
-folder = 'Permanent_water' # Permanent_water, Reservoirs
-area = 'permanent_area' # permanent_area, seasonal_area
+folder = 'Reservoirs' # Permanent_water, Reservoirs
+area = 'seasonal_area' # permanent_area, seasonal_area
 save_flag = True 
 
 basin_level = 6 # basin level
@@ -16,9 +16,9 @@ alpha = 1.5 # mean +/- alpha * std
 
 df = pd.DataFrame([], columns=['folder', 'area', 'basin_level', 'alpha', 'p_thd', 'num_of_masked_basins', 
                                         'thd_low', 'thd_high', 'method', 'neg', 'stable', 'pos'])
-df.to_csv('maps/maps.csv', mode='w')
+df.to_csv(f'maps/{folder}_{area}.csv', mode='w')
 
-for alpha in [0.5, 1, 1.5, 2]:
+for alpha in [1, 1.5, 2, 2.5, 3]:
     for p_thd in [0.01, 0.02, 0.025, 0.05]:
 
         print()
@@ -156,12 +156,12 @@ for alpha in [0.5, 1, 1.5, 2]:
             print(f"neg: {neg}, stable: {stable}, pos: {pos}")
 
             if 'sign' == col: # delta
-                title = f'{folder}/{area}: delta ({thd_low:.2f}% <= delta <= {thd_high:.2f}%)'
-                save_url = maps_dir / f'delta_alpha_{alpha}.png'
+                title = f'{folder}/{area}: delta ({alpha:.1f} std: {thd_low:.2f}% <= delta <= {thd_high:.2f}%)'
+                save_url = maps_dir / f'delta_a_{alpha:.1f}.png'
                 
             if 'u_sign' == col: # utest
                 title = f"{folder}/{area}: u_test (p={p_thd:.3f}, with delta mask) \n masked basins where {thd_low:.2f}% <= delta <= {thd_high:.2f}%) or baseline < 0.025 sq km"
-                save_url = maps_dir / f'utest_p_{p_thd:.3f}_a_{alpha:.1f}.png'
+                save_url = maps_dir / f'utest_a_{alpha:.1f}_p_{p_thd:.3f}.png'
 
 
             plt.tight_layout()
@@ -180,4 +180,4 @@ for alpha in [0.5, 1, 1.5, 2]:
         
             df = pd.DataFrame([row_single], columns=['folder', 'area', 'basin_level', 'alpha', 'p_thd', 'num_of_masked_basins', 
                                         'thd_low', 'thd_high', 'method', 'neg', 'stable', 'pos'])
-            df.to_csv('maps/maps.csv', mode='a', header=False)
+            df.to_csv(f'maps/{folder}_{area}.csv', mode='a', header=False)

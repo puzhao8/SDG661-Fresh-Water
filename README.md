@@ -58,11 +58,15 @@ dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
 if dry_mask & (median_diff != 0): u_sign = -99
 ```
 
-p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction, 1 for positive delta, -1 for negative delta, 0 for neutral (delta = 0), and -99 for dry basins whose baseline area is smaller than 0.0225 km $^2$ (precision: 5 pixels * 30m = 0.15km).
+p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction:
+- 1 for positive delta 
+- -1 for negative delta 
+- 0 for neutral (delta = 0)
+- -99 for dry basins whose baseline area is smaller than 0.0225 km $^2$ (precision: 5 pixels * 30m = 0.15km)
 
-It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha * \sigma \leq delta \leq \mu + \alpha * \sigma$ since we trust more in delta-based approach for determining the non-change basins.
+It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha \sigma \leq \delta  \leq \mu + \alpha \sigma$ since we trust more in delta-based approach for determining the non-change basins.
 
-## How to make decision based on CSV tables
+### How to make decision based on CSV tables
 
 decision = (p_u < p_thd) & (not $\delta_{low\_thd} \leq \delta \leq \delta_{high\_thd}$) * (u_sign.where(u_sign == -99, 0))
 

@@ -60,7 +60,7 @@ if dry_mask & (median_diff != 0): u_sign = -99
 
 p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction, 1 for positive delta, -1 for negative delta, 0 for neutral (delta = 0), and -99 for dry basins whose baseline area is smaller than 0.0225 km$^2$ (precision: 5 pixels * 30m = 0.15km).
 
-It is worth noting that the u_test was set to be non-change/neutral if |delta| < 10(%) (a specified threshold, which could also be determined using mean and std, e.g., $\mu - \alpha * \sigma \leq delta \leq \mu + \alpha * \sigma$) since we trust more in delta-based approach for determining the non-change basins.
+It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha * \sigma \leq delta \leq \mu + \alpha * \sigma$ since we trust more in delta-based approach for determining the non-change basins.
 
 ## codes
 ```python 

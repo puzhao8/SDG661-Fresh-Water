@@ -3,17 +3,19 @@
 import geopandas as gpd
 import pandas as pd
 import numpy as np
+from pathlib import Path
 import warnings
 warnings.filterwarnings("ignore")
 
 """ configuration """
 folder = 'Reservoirs' # Permanent_water, Reservoirs
-area = 'seasonal_area' # permanent_area, seasonal_area
+area = 'permanent_area' # permanent_area, seasonal_area
 save_flag = True 
 
 basin_level = 6 # basin level
 alpha = 1.5 # mean +/- alpha * std
 
+Path("maps").mkdir(exist_ok=True, parents=True)
 df = pd.DataFrame([], columns=['folder', 'area', 'basin_level', 'alpha', 'p_thd', 'num_of_masked_basins', 
                                         'thd_low', 'thd_high', 'method', 'neg', 'stable', 'pos'])
 df.to_csv(f'maps/{folder}_{area}.csv', mode='w')
@@ -35,8 +37,9 @@ for alpha in [1, 1.5, 2, 2.5, 3]:
 
         """ delta thresholds """
         df_thd = pd.read_csv(f"outputs_delta/{folder}/{area}/basin_level_mean_std.csv").set_index('basin_level')
-        mean = df_thd[f'mean_{area}'].iloc[basin_level]
-        std = df_thd[f'std_{area}'].iloc[basin_level]
+        mean = df_thd[f'mean_{area}'].loc[basin_level]
+        std = df_thd[f'std_{area}'].loc[basin_level]
+        print(f"mean: {mean}, std: {std}")
 
         thd_low = mean - alpha * std 
         thd_high = mean + alpha * std 
@@ -147,7 +150,7 @@ for alpha in [1, 1.5, 2, 2.5, 3]:
             pos = gdf_join[gdf_join[col] == 1].shape[0]
 
             if 'sign' == col:
-                row_single = [folder, area, basin_level, alpha, p_thd, num_of_masked_basins, thd_low, thd_high, 'delta', neg, stable, pos]
+                row_single = [folder, area, basin_level, alpha, None, num_of_masked_basins, thd_low, thd_high, 'delta', neg, stable, pos]
             
             if 'u_sign' == col:
                 row_single = [folder, area, basin_level, alpha, p_thd, num_of_masked_basins, thd_low, thd_high, 'utest', neg, stable, pos]
@@ -160,7 +163,7 @@ for alpha in [1, 1.5, 2, 2.5, 3]:
                 save_url = maps_dir / f'delta_a_{alpha:.1f}.png'
                 
             if 'u_sign' == col: # utest
-                title = f"{folder}/{area}: u_test (p={p_thd:.3f}, with delta mask) \n masked basins where {thd_low:.2f}% <= delta <= {thd_high:.2f}%) or baseline < 0.025 sq km"
+                title = f"{folder}/{area}: u_test (p={p_thd:.3f}, with delta mask) \n masked basins where {thd_low:.2f}% <= delta <= {thd_high:.2f}% or baseline < 0.025 sq km"
                 save_url = maps_dir / f'utest_a_{alpha:.1f}_p_{p_thd:.3f}.png'
 
 

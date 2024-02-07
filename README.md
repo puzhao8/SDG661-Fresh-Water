@@ -9,8 +9,8 @@ where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denot
 To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-15}$ by default.
 
 Low and high thresholds based on $\mu$ and $\sigma$: \
-$\delta_{low.thd} = \mu - \alpha * \sigma$ \
-$\delta_{high.thd} = \mu + \alpha * \sigma$ \
+$\delta_{low\_thd} = \mu - \alpha * \sigma$ \
+$\delta_{high\_thd} = \mu + \alpha * \sigma$ \
 where $\mu$ and $\sigma$ denote the mean and standard deviation respectively, and $\alpha \in [0.5, 1, 1.5, 2, 2.5, 3, 4, 5]$.
 
 ## U-Test (or T-Test) Methods
@@ -58,9 +58,16 @@ dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
 if dry_mask & (median_diff != 0): u_sign = -99
 ```
 
-p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction, 1 for positive delta, -1 for negative delta, 0 for neutral (delta = 0), and -99 for dry basins whose baseline area is smaller than 0.0225 km$^2$ (precision: 5 pixels * 30m = 0.15km).
+p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction, 1 for positive delta, -1 for negative delta, 0 for neutral (delta = 0), and -99 for dry basins whose baseline area is smaller than 0.0225 km $^2$ (precision: 5 pixels * 30m = 0.15km).
 
 It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha * \sigma \leq delta \leq \mu + \alpha * \sigma$ since we trust more in delta-based approach for determining the non-change basins.
+
+## How to make decision based on CSV tables
+
+decision = (p_u < p_thd) & (not $\delta_{low\_thd} \leq \delta \leq \delta_{high\_thd}$) * (u_sign.where(u_sign == -99, 0))
+
+![image](outputs_utest\csv_screenshot.png)
+
 
 ## codes
 ```python 
@@ -87,7 +94,13 @@ outputs_utest (with delta non-change masking) / \
 ├───── permanent_area\
 ├───── seasonal_area\
 
-Map folder includes global maps.
+## Maps
+
+maps\Permanent_water\permanent_area
+![image](maps\Permanent_water\permanent_area\utest_a_2.0_p_0.050.png)
+
+maps\Permanent_water\seasonal_area \
+![image](maps\Permanent_water\seasonal_area\utest_a_2.0_p_0.050.png)
 
 
 

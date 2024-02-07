@@ -97,10 +97,10 @@ outputs_utest (with delta non-change masking) / \
 ## Maps
 
 maps\Permanent_water\permanent_area
-![image](maps\Permanent_water\permanent_area\utest_a_2.0_p_0.050.png)
+![image](figures\Permanent_water_permanent_area_utest_a_2.0_p_0.050.png)
 
 maps\Permanent_water\seasonal_area \
-![image](maps\Permanent_water\seasonal_area\utest_a_2.0_p_0.050.png)
+![image](figures\Permanent_water_seasonal_area_utest_a_2.0_p_0.050.png)
 
 
 

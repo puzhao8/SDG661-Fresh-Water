@@ -67,8 +67,18 @@ p_u < p_thd (0.05 as the significance level by default) determines a basin chang
 It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha \sigma \leq \delta  \leq \mu + \alpha \sigma$ since we trust more in delta-based approach for determining the non-change basins.
 
 ### How to make decision based on CSV tables
+```python 
+mean, std, thd_low, thd_high = get_delta_thresholds(basin_level, folder, area, alpha)
 
-decision = (p_u < p_thd) & (not $\delta_{low\_{thd}} \leq \delta \leq \delta_{high\_{thd}}$) * (u_sign.where(u_sign == -99, 0))
+df['decision'] = None
+df['decision'][(df['p_u'] < p_thd) & (df['delta'] < 0)] = -1 # decreased basins determined by utest
+df['decision'][(df['p_u'] < p_thd) & (df['delta'] > 0)] = 1 # increased basins  determined by utest
+df['decision'][df['p_u'] >= p_thd] = 0 # non-change determined by u-test
+
+df['decision'][(thd_low <= df['delta']) & (df['delta'] <= thd_high)] = 0 # non-change determined by delta mean and std
+df['decision'][df['baseline_median'] < 0.0225] = -99 # dry basins
+```
+
 
 ![image](figures/csv_screenshot.png)
 

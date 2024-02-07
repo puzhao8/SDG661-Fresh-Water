@@ -68,7 +68,7 @@ It is worth noting that the u_test was set as non-change/neutral if $\mu - \alph
 
 ### How to make decision based on CSV tables
 
-decision = (p_u < p_thd) & (not $\delta_{low\_thd} \leq \delta \leq \delta_{high\_thd}$) * (u_sign.where(u_sign == -99, 0))
+decision = (p_u < p_thd) & (not $\delta_{low\_{thd}} \leq \delta \leq \delta_{high\_{thd}}$) * (u_sign.where(u_sign == -99, 0))
 
 ![image](figures/csv_screenshot.png)
 

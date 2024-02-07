@@ -97,10 +97,10 @@ outputs_utest (with delta non-change masking) / \
 ## Maps
 
 maps\Permanent_water\permanent_area
-![image](https://github.com/puzhao8/SDG661-Fresh-Water/blob/main/figures\Permanent_water_permanent_area_utest_a_2_p_0_05.png)
+![image](https://github.com/puzhao8/SDG661-Fresh-Water/blob/main/figures/Permanent_water_permanent_area_utest_a_2_p_0_05.png)
 
 maps\Permanent_water\seasonal_area \
-![image](https://github.com/puzhao8/SDG661-Fresh-Water/blob/main/figures\Permanent_water_seasonal_area_utest_a_2_p_0_05.png)
+![image](figures/Permanent_water_seasonal_area_utest_a_2_p_0_05.png)
 
 
 

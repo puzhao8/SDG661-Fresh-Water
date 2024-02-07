@@ -66,7 +66,7 @@ It is worth noting that the u_test was set as non-change/neutral if $\mu - \alph
 
 decision = (p_u < p_thd) & (not $\delta_{low\_thd} \leq \delta \leq \delta_{high\_thd}$) * (u_sign.where(u_sign == -99, 0))
 
-![image](outputs_utest\csv_screenshot.png)
+![image](figures\csv_screenshot.png)
 
 
 ## codes
@@ -97,10 +97,10 @@ outputs_utest (with delta non-change masking) / \
 ## Maps
 
 maps\Permanent_water\permanent_area
-![image](figures\Permanent_water_permanent_area_utest_a_2.0_p_0.050.png)
+![image](figures\Permanent_water_permanent_area_utest_a_2_p_0_05.png)
 
 maps\Permanent_water\seasonal_area \
-![image](figures\Permanent_water_seasonal_area_utest_a_2.0_p_0.050.png)
+![image](figures\Permanent_water_seasonal_area_utest_a_2_p_0_05.png)
 
 
 

@@ -105,6 +105,8 @@ if __name__ == '__main__':
         print(f"high: {high}")
         
         df = remove_outliers(df_delta, low, high)
+        
+        print()
         print("df describe after removing outliers")
         print(df.describe())
         

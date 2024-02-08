@@ -47,10 +47,7 @@ def calculate_delta(group, basin_level, epision=1e-15):
 def remove_outliers(df, p_low, p_high):
     for col in [COL_NAME]:
         select = (df[col] > p_low[col]) & (df[col] < p_high[col])
-        # select = (df[col] < p_high[col])
         df = df[select]
-        # df = df.drop(index=df[df[col] <= p1[col]].index)
-        # df = df.drop(index=df[df[col] >= p99[col]].index)
     return df
 
 
@@ -77,7 +74,6 @@ if __name__ == '__main__':
         url = data_dir / folder / f"basins_level_{basin_level}_ts.csv"
         basin = dd.read_csv(url, include_path_column=False, dtype=dtypes).repartition(npartitions=80).set_index(f'id_bgl_{basin_level}')
         
-    
         df_delta = basin.groupby(f'id_bgl_{basin_level}', group_keys=False).apply(calculate_delta, basin_level, epision, meta=meta).set_index('id_bgl')
         df_delta = df_delta.compute()
         df_delta.to_csv(output_dir / f"basins_level_{basin_level}_ts_delta.csv")

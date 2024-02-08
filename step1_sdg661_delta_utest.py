@@ -105,7 +105,7 @@ if __name__ == '__main__':
         print(f"high: {high}")
         
         df = remove_outliers(df_delta, low, high)
-        
+
         print()
         print("df describe after removing outliers")
         print(df.describe())
@@ -113,13 +113,13 @@ if __name__ == '__main__':
         # df_delta.visualize('test.png')
         # df.to_csv(output_dir / f"basins_level_{basin_level}_ts_delta_outliers_removed.csv")
     
-        # save hist
-        import matplotlib.pyplot as plt
-        plt.figure()
-        df['delta'].plot(kind='hist', logy=True, bins=200)
-        plt.title(f'basin level: {basin_level}, {area}')
-        plt.savefig(output_dir / f"basins_level_{basin_level}_hist_{area}.png")
-        plt.close()
+        # # save hist
+        # import matplotlib.pyplot as plt
+        # plt.figure()
+        # df['delta'].plot(kind='hist', logy=True, bins=200)
+        # plt.title(f'basin level: {basin_level}, {area}')
+        # plt.savefig(output_dir / f"basins_level_{basin_level}_hist_{area}.png")
+        # plt.close()
     
         # calculate mean and std
         row = [basin_level, df['delta'].mean(), df['delta'].std()]

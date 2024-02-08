@@ -14,15 +14,13 @@ dtypes = {
             "maybeseasonal": 'float64'
          }
 
-data_dir = Path('data')
-COL_NAME = 'permanent_area' # permanent_area, seasonal_area
-cols_required = [
-    COL_NAME
-    # 'permanent_area', 
-    # 'seasonal_area'
-    #  'maybepermanent', 'maybeseasonal'
-    ]
-arr_mean_std = []
+# cols_required = [
+#     area
+#     # 'permanent_area', 
+#     # 'seasonal_area'
+#     #  'maybepermanent', 'maybeseasonal'
+#     ]
+
 
 meta = {
     'id_bgl': 'str', 
@@ -42,13 +40,13 @@ def delta_and_utest(group, basin_level, epision=1e-5):
     # group = group.reset_index() # needed for drop
     id = group.index[0]
     
-    baseline_period = group[(2000 <= group['aggregation_year']) & (group['aggregation_year']<= 2019)][COL_NAME]
+    baseline_period = group[(2000 <= group['aggregation_year']) & (group['aggregation_year']<= 2019)][area]
     baseline_median = baseline_period.median()
 
     row_arr = []
     for start_year in [2000, 2005, 2010, 2015, 2017]:
     # for start_year in [2017]:
-        report_period = group[ (start_year <= group['aggregation_year']) & (group['aggregation_year'] < start_year + 5)][COL_NAME]
+        report_period = group[ (start_year <= group['aggregation_year']) & (group['aggregation_year'] < start_year + 5)][area]
         report_median = report_period.median()
 
         t_score, p_t = stats.ttest_ind(report_period, baseline_period,  equal_var=False) # T-test
@@ -71,16 +69,20 @@ if __name__ == '__main__':
     cluster = LocalCluster(dashboard_address=':38787')
     client = Client(cluster)#timeout
     
+    data_dir = Path('data')
     folder = "Permanent_water" # Reservoirs, Permanent_water
+    area = 'permanent_area' # permanent_area, seasonal_area
+
     epision = 1e-5 # 0.0225
     
     p_low = 2 # remove lowest 1%
     p_high = 98 # remove highest 4%
     
-    output_dir = Path("outputs_utest_V1") / folder / COL_NAME 
+    output_dir = Path("outputs_utest_V1") / folder / area 
     output_dir.mkdir(exist_ok=True, parents=True)
     print(output_dir)
     
+    arr_mean_std = []
     for basin_level in [0, 3, 4, 5, 6, 7, 8]:
     # for basin_level in [0, 3]:
         print()
@@ -113,8 +115,8 @@ if __name__ == '__main__':
         import matplotlib.pyplot as plt
         plt.figure()
         df['delta'].plot(kind='hist', logy=True, bins=200)
-        plt.title(f'basin level: {basin_level}, {COL_NAME}')
-        plt.savefig(output_dir / f"basins_level_{basin_level}_hist_{COL_NAME}.png")
+        plt.title(f'basin level: {basin_level}, {area}')
+        plt.savefig(output_dir / f"basins_level_{basin_level}_hist_{area}.png")
         plt.close()
     
         # calculate mean and std

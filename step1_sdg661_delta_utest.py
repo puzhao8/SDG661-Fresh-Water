@@ -66,12 +66,12 @@ def remove_outliers(df, low, high):
 
 if __name__ == '__main__':
     from dask.distributed import Client, LocalCluster
-    cluster = LocalCluster(dashboard_address=':38787')
+    cluster = LocalCluster(n_workers=8, threads_per_worker=4, dashboard_address=':38787')
     client = Client(cluster)#timeout
     
     data_dir = Path('data')
-    folder = "Permanent_water" # Reservoirs, Permanent_water
-    area = 'permanent_area' # permanent_area, seasonal_area
+    folder = "Reservoirs" # Reservoirs, Permanent_water
+    area = 'seasonal_area' # permanent_area, seasonal_area
 
     epision = 1e-5 # 0.0225
     

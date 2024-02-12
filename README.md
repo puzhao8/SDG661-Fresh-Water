@@ -88,10 +88,12 @@ df['decision'][df['baseline_median'] < 0.0225] = -99 # dry basins
 # convert gaul_0 input data into same format as the other basin levels (3-8).
 python step0_convert_gaul_0_data.py 
 
-python step1_sdg661_delta.py # generate delta csv
-python step2_sdg661_utest.py # generate ttest (utest) csv
+python step1_sdg661_delta_utest.py # generate delta and utest csv
 
-step3_analyze_results.ipynb # test and results analysis
+python step2_make_decision.py # generate delta and utest csv
+
+python step3_map.py # generate delta and utest csv
+
 ```
 
 
@@ -106,7 +108,7 @@ outputs_utest (with delta non-change masking) / \
 ├────────── basins_level_4_utest.csv\
 ├── Reservoirs\
 ├───── permanent_area\
-├───── seasonal_area\
+├───── seasonal_area
 
 ## Maps
 

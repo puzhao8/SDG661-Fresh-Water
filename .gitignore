@@ -9,5 +9,4 @@ outputs_utest
 outputs_delta
 outputs_utest_V1_decision/*/*/basins_level_7_utest.csv
 outputs_utest_V1_decision/*/*/basins_level_8_utest.csv
-maps_V1/*
 logs/

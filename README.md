@@ -67,7 +67,7 @@ p_u < p_thd (0.05 as the significance level by default) determines a basin chang
 It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha \sigma \leq \delta  \leq \mu + \alpha \sigma$ since we trust more in delta-based approach for determining the non-change basins.
 
 ### How to make decision based on CSV tables
-The final decison is determined by considering both decisions made by delta and u-test, and it is conservative to make positive or negative change decision, except for both approches agree on this.
+The final decison is determined by considering both decisions made by delta and u-test, and it is conservative to make positive or negative change decision, except for both approaches agree on this.
 - positive change (+1):  only when both delta and u-test agree a basin is positve change
 - negative change (-1): only when both delta and u-test agree a basin is negative change
 - unchanged/neutral (0): one of delta and u-test or both suggests a basin is unchanged. 

@@ -1,4 +1,7 @@
+#%%
+import os
 import pandas as pd
+from pathlib import Path
 
 def get_delta_at_basin_level_0(input_dir, folder, area):
     delta_basin_0 = pd.read_csv(input_dir / folder / area / "basins_level_0_utest.csv")
@@ -35,8 +38,46 @@ def count_by_peroid(group):
 
 
 input_dir = Path("outputs_utest_V1_decision")
+
+import geopandas as gpd
+gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+masked_basins = gpd.read_file("data\Masked__basins\SNow_Arid_Mask.shp")
+
+# country name
+country_name = pd.read_csv("data\Permanent_water\gaul_0_ts.csv")
+country_name = country_name[['adm0_code', 'adm0_name']].set_index('adm0_code').drop_duplicates()
+
+
+
+#%% For Debug Only
+# folder = 'Permanent_water' # Permanent_water, Reservoirs
+# area = 'permanent_area' # permanent_area, seasonal_area
+
+# # delta at country level
+# df_delta = get_delta_at_basin_level_0(input_dir, folder, area)
+
+# # count changed basins
+# # df = pd.read_csv(input_dir / folder / area / "basins_level_6_utest.csv")
+# # df['adm0_code'] = df['id_bgl'].transform(lambda x: eval(x.split("_")[-1]))
+
+# utest = pd.read_csv(input_dir / folder / area / "basins_level_6_utest.csv")
+# utest['adm0_code'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[-1]))
+# utest['PFAF_ID'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[0]))
+
+# gdf_join = gdf.merge(utest, on='PFAF_ID', how='right').to_crs('+proj=robin')
+# gdf_join = gdf_join[~gdf_join['PFAF_ID'].isin(list(masked_basins['PFAF_ID_6'].unique()))]
+
+# print('PFAF_ID', len(gdf_join['PFAF_ID'].unique()))
+# print('id_bgl', len(gdf_join['id_bgl'].unique()))
+
+# # df_count = gdf_join.groupby(by='adm0_code').apply(count_by_peroid).reset_index().set_index('adm0_code').drop(columns=['level_1'])
+
+
+#%%
+
 for folder in os.listdir(input_dir):
     for area in os.listdir(input_dir / folder):
+
         save_dir = Path("outputs_utest_V1_decision") / folder / area
         save_dir.mkdir(exist_ok=True, parents=True)
 
@@ -44,9 +85,17 @@ for folder in os.listdir(input_dir):
         df_delta = get_delta_at_basin_level_0(input_dir, folder, area)
 
         # count changed basins
-        df = pd.read_csv(input_dir / folder / area / "basins_level_6_utest.csv")
-        df['adm0_code'] = df['id_bgl'].transform(lambda x: eval(x.split("_")[-1]))    
-        df_count = df.groupby(by='adm0_code').apply(count_by_peroid).reset_index().set_index('adm0_code').drop(columns=['level_1'])
+        # df = pd.read_csv(input_dir / folder / area / "basins_level_6_utest.csv")
+        # df['adm0_code'] = df['id_bgl'].transform(lambda x: eval(x.split("_")[-1]))
+
+        utest = pd.read_csv(input_dir / folder / area / "basins_level_6_utest.csv")
+        utest['adm0_code'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[-1]))
+        utest['PFAF_ID'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[0]))
+
+        gdf_join = gdf.merge(utest, on='PFAF_ID', how='right').to_crs('+proj=robin')
+        gdf_join = gdf_join[~gdf_join['PFAF_ID'].isin(list(masked_basins['PFAF_ID_6'].unique()))]
+
+        df_count = gdf_join.groupby(by='adm0_code').apply(count_by_peroid).reset_index().set_index('adm0_code').drop(columns=['level_1'])
 
         # country name
         country_name = pd.read_csv("data\Permanent_water\gaul_0_ts.csv")
@@ -64,5 +113,5 @@ for folder in os.listdir(input_dir):
                         'count_basins_negative_2015_2019', 'count_basins_plus_2017_2021',
                         'count_basins_negative_2017_2021', 'total_basins']]
         
-        df_count.to_excel(f"outputs_tables/{folder}_{area}.xlsx")
+        df_count.to_excel(f"outputs_tables_V1/{folder}_{area}.xlsx")
         # df_count.to_excel(f"outputs_tables/{folder}_{area}.csv")

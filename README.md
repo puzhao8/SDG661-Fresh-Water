@@ -6,12 +6,12 @@ Evaluate the relative changes between the report period (2017-2021) and baseline
 
 $\delta = \frac{\gamma-\beta}{\beta + \epsilon}$ * 100 \
 where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma$ denotes the median spatial extent for the report period (2017-2021). 
-To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-15}$ by default.
+To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-5}$ by default.
 
 Low and high thresholds based on $\mu$ and $\sigma$: \
-$\delta_{low\_thd} = \mu - \alpha * \sigma$ \
-$\delta_{high\_thd} = \mu + \alpha * \sigma$ \
-where $\mu$ and $\sigma$ denote the mean and standard deviation respectively, and $\alpha \in [0.5, 1, 1.5, 2, 2.5, 3, 4, 5]$.
+$\delta_{low\_{thd}} = \mu - \lambda \sigma$ \
+$\delta_{high\_{thd}} = \mu + \lambda \sigma$ \
+where $\mu$ and $\sigma$ denote the mean and standard deviation respectively, and $\lambda \in [1, 1.5, 2]$ ($\lambda$ = 1.5 for Permanent water and $\lambda$ = 1.0 for Reservoirs).
 
 ## U-Test (or T-Test) Methods
 Evaluate the significance of difference bewteen two groups, i.e., report period (2017-2021) and baseline (2000-2019)
@@ -58,19 +58,19 @@ dry_mask = median_baseline < 0.0225 # dry basin if true, precision=0.0225
 if dry_mask & (median_diff != 0): u_sign = -99
 ```
 
-p_u < p_thd (0.05 as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction:
+$p_u$ < $p_{thd}$ ( $p_{thd}$ = 0.025 is taken as the significance level by default) determines a basin changes or not (True for change, False for non-change), while u_sign is the sign of delta which determines the change direction:
 - 1 for positive delta 
 - -1 for negative delta 
 - 0 for neutral (delta = 0)
 - -99 for dry basins whose baseline area is smaller than 0.0225 km $^2$ (precision: 5 pixels * 30m = 0.15km)
 
-It is worth noting that the u_test was set as non-change/neutral if $\mu - \alpha \sigma \leq \delta  \leq \mu + \alpha \sigma$ since we trust more in delta-based approach for determining the non-change basins.
+It is worth noting that the u_test was set as non-change/neutral if $\mu - \lambda \sigma \leq \delta  \leq \mu + \lambda \sigma$ since we trust more in delta-based approach for determining the non-change basins.
 
 ### How to make decision based on CSV tables
 The final decison is determined by considering both decisions made by delta and u-test, and it is conservative to make positive or negative change decision, except for both approaches agree on this.
 - positive change (+1):  only when both delta and u-test agree a basin is positve change
 - negative change (-1): only when both delta and u-test agree a basin is negative change
-- unchanged/neutral (0): one of delta and u-test or both suggests a basin is unchanged. 
+- unchanged/neutral (0): one of delta and u-test or both suggests a basin is unchanged
 
 ![image](figures/SDG-decision-logic.png)
 

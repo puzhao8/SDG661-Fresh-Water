@@ -13,9 +13,9 @@ To handle the case when $\beta(x) = 0$, we used $\epsilon = 1e^{-5}$ by default.
 
 Having $\delta(x_i)$ for $N$ basins, where $x_i$ denotes $i$-th basin, we can calculate the corresponding mean and standard deviation:
 
-$\mu = \frac{1}{N}\sum_{i=0}^N \delta(x_i)$ 
+$\mu = \frac{1}{N} \sum \delta(x_i)$ 
 
-$\sigma = \sqrt{\frac{1}{N}\sum_{i=0}^N (\delta(x_i) - \mu)^2}$
+$\sigma = \sqrt{\frac{1}{N} \sum (\delta(x_i) - \mu)^2}$
 
 
 Based on $\mu$ and $\sigma$, low and high thresholds can be determined by specifying a $\lambda$ (we adopted $\lambda$ = 1.5 for Permanent water and $\lambda$ = 1.0 for Reservoirs): 

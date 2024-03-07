@@ -87,21 +87,23 @@ The final decison is determined by considering both decisions made by delta and 
 ![image](figures/SDG-decision-logic-V1.png)
 
 ```python 
-mean, std, thd_low, thd_high = get_delta_thresholds(basin_level, folder, area, alpha)
+""" make decision based on delta and utest, add a column named decision """
+def add_decision(df, thd_low, thd_high):
+    df['decision'] = None
 
-df['decision'] = None
+    # negatively changed basins agreed by both delta and u-test
+    df.loc[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = -1 
 
-# negatively changed basins agreed by both delta and u-test
-df[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = -1 
+    # positively changed basins agreed by both delta and u-test
+    df.loc[(df.delta > thd_high) & (df.p_u < p_thd), 'decision'] = 1 
 
-# positively changed basins agreed by both delta and u-test
-df[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = 1 
+    # unchanged basins suggested by one of delta and u-test or both of them
+    df.loc[((df.delta >= thd_low) & (df.delta <= thd_high)) | (df.p_u >= p_thd), 'decision'] = 0 
+    
+    # dry basins
+    df.loc[df.baseline_median < 0.0225, 'decision'] = -99
 
-# unchanged basins suggested by one of delta and u-test or both of them
-df[((df.delta >= thd_low) & (df.delta <= thd_high)) | (df.p_u >= p_thd), 'decision'] = 0 
-
-# dry basins
-df['decision'][df['baseline_median'] < 0.0225] = -99 
+    return df
 ```
 
 

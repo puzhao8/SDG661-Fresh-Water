@@ -23,15 +23,6 @@ def get_delta_thresholds(basin_level, folder, area, alpha):
 def add_decision(df, thd_low, thd_high):
     df['decision'] = None
 
-    # old version
-    if False:
-        df.loc[(df.p_u < p_thd) & (df.delta < 0), 'decision'] = -1 # decreased basins determined by utest
-        df.loc[(df.p_u < p_thd) & (df.delta > 0), 'decision'] = 1 # increased basins  determined by utest
-        df.loc[df.p_u >= p_thd, 'decision'] = 0 # non-change determined by u-test
-        df.loc[(thd_low <= df.delta) & (df.delta <= thd_high), 'decision'] = 0 # non-change determined by delta mean and std
-        df.loc[df.baseline_median < 0.0225, 'decision'] = -99 # dry basins
-
-    """ new version """
     # negatively changed basins agreed by both delta and u-test
     df.loc[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = -1 
 
@@ -43,6 +34,14 @@ def add_decision(df, thd_low, thd_high):
     
     # dry basins
     df.loc[df.baseline_median < 0.0225, 'decision'] = -99 
+
+    # old version
+    if False:
+        df.loc[(df.p_u < p_thd) & (df.delta < 0), 'decision'] = -1 # decreased basins determined by utest
+        df.loc[(df.p_u < p_thd) & (df.delta > 0), 'decision'] = 1 # increased basins  determined by utest
+        df.loc[df.p_u >= p_thd, 'decision'] = 0 # non-change determined by u-test
+        df.loc[(thd_low <= df.delta) & (df.delta <= thd_high), 'decision'] = 0 # non-change determined by delta mean and std
+        df.loc[df.baseline_median < 0.0225, 'decision'] = -99 # dry basins
 
     return df
 

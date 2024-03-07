@@ -10,3 +10,6 @@ outputs_delta
 outputs_utest_V1_decision/*/*/basins_level_7_utest.csv
 outputs_utest_V1_decision/*/*/basins_level_8_utest.csv
 logs/
+outputs_utest_V1_decision_V1
+maps_choose_lambda
+maps_decision_V1

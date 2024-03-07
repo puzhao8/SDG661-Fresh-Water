@@ -2,16 +2,28 @@
 This project aims to analyze the temporal changes of pemanenet water and resovoirs at various basin levels.
 
 ## Delta Methods: Relative Changes 
-Evaluate the relative changes between the report period (2017-2021) and baseline (2000-2019) 
+The objective is to evaluate the relative changes between the report period (2017-2021) and baseline (2000-2019). 
 
-$\delta = \frac{\gamma-\beta}{\beta + \epsilon}$ * 100 \
-where $\delta$ denotes the percentage of change in spatial extent, $\beta$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma$ denotes the median spatial extent for the report period (2017-2021). 
-To handle the case when $\beta = 0$, we used $\epsilon = 1e^{-5}$ by default.
+For a given basin $x$, the relative change $\delta(x)$ can be defined as:
 
-Low and high thresholds based on $\mu$ and $\sigma$: \
-$\delta_{low\_{thd}} = \mu - \lambda \sigma$ \
-$\delta_{high\_{thd}} = \mu + \lambda \sigma$ \
-where $\mu$ and $\sigma$ denote the mean and standard deviation respectively, and $\lambda \in [1, 1.5, 2]$ ($\lambda$ = 1.5 for Permanent water and $\lambda$ = 1.0 for Reservoirs).
+$\delta(x) = \frac{\gamma(x)-\beta(x)}{\beta(x) + \epsilon}$ * 100 
+
+where $\delta(x)$ denotes the percentage of change in spatial extent, $\beta(x)$ denotes the median spatial extent for the baseline period (2000-2019), while $\gamma(x)$ denotes the median spatial extent for the report period (2017-2021). 
+To handle the case when $\beta(x) = 0$, we used $\epsilon = 1e^{-5}$ by default.
+
+Having $\delta(x_i)$ for $N$ basins, where $x_i$ denotes $i$-th basin, we can calculate the corresponding mean and standard deviation:
+
+$\mu = \frac{1}{N}\sum_{i=0}^N \delta(x_i)$ 
+
+$\sigma = \sqrt{\frac{1}{N}\sum_{i=0}^N (\delta(x_i) - \mu)^2}$
+
+
+Based on $\mu$ and $\sigma$, low and high thresholds can be determined by specifying a $\lambda$ (we adopted $\lambda$ = 1.5 for Permanent water and $\lambda$ = 1.0 for Reservoirs): 
+
+$\delta_{low\_{thd}} = \mu - \lambda \sigma$ 
+
+$\delta_{high\_{thd}} = \mu + \lambda \sigma$ 
+
 
 ## U-Test (or T-Test) Methods
 Evaluate the significance of difference bewteen two groups, i.e., report period (2017-2021) and baseline (2000-2019)
@@ -72,19 +84,27 @@ The final decison is determined by considering both decisions made by delta and 
 - negative change (-1): only when both delta and u-test agree a basin is negative change
 - unchanged/neutral (0): one of delta and u-test or both suggests a basin is unchanged
 
-![image](figures/SDG-decision-logic.png)
+![image](figures/SDG-decision-logic-V1.png)
 
 ```python 
 mean, std, thd_low, thd_high = get_delta_thresholds(basin_level, folder, area, alpha)
 
 df['decision'] = None
-df['decision'][(df['p_u'] < p_thd) & (df['delta'] < 0)] = -1 # decreased basins determined by utest
-df['decision'][(df['p_u'] < p_thd) & (df['delta'] > 0)] = 1 # increased basins  determined by utest
-df['decision'][df['p_u'] >= p_thd] = 0 # non-change determined by u-test
 
-df['decision'][(thd_low <= df['delta']) & (df['delta'] <= thd_high)] = 0 # non-change determined by delta mean and std
-df['decision'][df['baseline_median'] < 0.0225] = -99 # dry basins
+# negatively changed basins agreed by both delta and u-test
+df[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = -1 
+
+# positively changed basins agreed by both delta and u-test
+df[(df.delta < thd_low) & (df.p_u < p_thd), 'decision'] = 1 
+
+# unchanged basins suggested by one of delta and u-test or both of them
+df[((df.delta >= thd_low) & (df.delta <= thd_high)) | (df.p_u >= p_thd), 'decision'] = 0 
+
+# dry basins
+df['decision'][df['baseline_median'] < 0.0225] = -99 
 ```
+
+
 
 
 ![image](figures/csv_screenshot.png)
@@ -119,11 +139,11 @@ outputs_utest (with delta non-change masking) / \
 
 ## Maps
 
-maps\Permanent_water\permanent_area
-![image](figures/Permanent_water_permanent_area_utest_a_2_p_0_05.png)
+maps_decision/Permanent_water/permanent_area/2017_utest_a_1.5_p_0.025.png
+![image](maps_decision/Permanent_water/permanent_area/2017_utest_a_1.5_p_0.025.png)
 
-maps\Permanent_water\seasonal_area \
-![image](figures/Permanent_water_seasonal_area_utest_a_2_p_0_05.png)
+maps_decision\Reservoirs\permanent_area\2017_utest_a_1.0_p_0.025.png
+![image](maps_decision/Reservoirs/permanent_area/2017_utest_a_1.0_p_0.025.png)
 
 
 

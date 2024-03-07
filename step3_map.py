@@ -10,12 +10,15 @@ warnings.filterwarnings("ignore")
 """ configuration """
 folder = 'Permanent_water' # Permanent_water, Reservoirs
 area = 'permanent_area' # permanent_area, seasonal_area
-start_year = 2010
+start_year = 2017
 p_thd = 0.025
 basin_level = 6 # basin level
 save_flag = True 
-maps_dir = Path('maps_V1') 
 csv_init_flag = False # csv initalization flag
+
+input_dir = Path("outputs_utest_V1_decision_V1")
+maps_dir = Path('maps_decision_V1') 
+
 
 for folder in ['Permanent_water', 'Reservoirs']:
     for area in ['permanent_area', 'seasonal_area']:
@@ -29,8 +32,6 @@ for folder in ['Permanent_water', 'Reservoirs']:
         # for alpha in [1, 1.5, 2, 2.5, 3]:
         #     for p_thd in [0.01, 0.02, 0.025, 0.05]:
 
-
-        input_dir = Path("outputs_utest_V1_decision")
         utest_all = pd.read_csv(input_dir / folder / area / f"basins_level_{basin_level}_utest.csv")
         utest = utest_all[utest_all['start_year'] == start_year]
 

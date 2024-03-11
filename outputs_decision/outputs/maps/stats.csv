@@ -1,0 +1,5 @@
+,folder,area,basin_level,start_year,alpha,p_thd,thd_low,thd_high,method,neg,stable,pos,total_basins,dry_basins,num_of_masked_basins
+0,Permanent_water,permanent_area,6,2017,1.5,0.025,-22.42207199130748,20.97002162529229,delta + utest,364,12430,1102,13896,2739,2800
+0,Permanent_water,seasonal_area,6,2017,1.5,0.025,-33.2815444481852,38.79674081313456,delta + utest,72,10360,3464,13896,1320,2800
+0,Reservoirs,permanent_area,6,2017,1.0,0.025,-1.840227258156663,1.6694676000739763,delta + utest,168,13256,472,13896,11287,2800
+0,Reservoirs,seasonal_area,6,2017,1.0,0.025,-4.075167903832757,4.206379384563705,delta + utest,82,13467,347,13896,11226,2800

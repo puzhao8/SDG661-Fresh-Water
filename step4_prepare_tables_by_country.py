@@ -57,7 +57,7 @@ def count_by_peroid(group):
 
 """ Configuration """
 input_dir = Path("outputs_decision")
-save_dir = input_dir / 'outputs' / 'tables_by_country'
+save_dir = input_dir / 'outputs' / 'csv_by_country'
 save_dir.mkdir(exist_ok=True, parents=True) 
 
 
@@ -118,7 +118,8 @@ for folder in ['Permanent_water', 'Reservoirs']:
                         'count_basins_negative_2015_2019', 'count_basins_plus_2017_2021',
                         'count_basins_negative_2017_2021', 'total_basins']]
         
-        df_count.set_index('adm0_code').to_excel(save_dir / f"{folder}_{area}.xlsx")
+        # df_count.set_index('adm0_code').to_excel(save_dir / f"{folder}_{area}.xlsx")
+        df_count.set_index('adm0_code').to_csv(save_dir / f"{folder}_{area}.csv")
         # df_count.to_excel(f"outputs_tables/{folder}_{area}.csv")
 
 
@@ -128,7 +129,10 @@ for folder in ['Permanent_water', 'Reservoirs']:
 import pandas as pd
 
 for filename in ['Permanent_water_permanent_area', 'Reservoirs_permanent_area']:
-    df = pd.read_excel(save_dir / f"{filename}.xlsx")
+    # df = pd.read_excel(save_dir / f"{filename}.xlsx")
+
+    df = pd.read_csv(save_dir / f"{filename}.csv")
+
     neg_count_sum = df.filter(regex='count_basins_negative_*').sum().values
     pos_count_sum = df.filter(regex='count_basins_plus_*').sum().values
     total_count_sum = df.total_basins.sum()
@@ -141,4 +145,5 @@ for filename in ['Permanent_water_permanent_area', 'Reservoirs_permanent_area']:
     out['percent_neg (%)'] = out.num_neg / out.num_total * 100
     out['percent_pos (%)'] = out.num_pos / out.num_total * 100
 
-    out.to_excel(save_dir / f"aggregated_{filename}.xlsx")
+    # out.to_excel(save_dir / f"aggregated_{filename}.xlsx")
+    out.to_csv(save_dir / f"aggregated_{filename}.csv")

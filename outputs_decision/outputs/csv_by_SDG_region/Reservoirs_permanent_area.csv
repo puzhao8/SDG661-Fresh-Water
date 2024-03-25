@@ -1,0 +1,11 @@
+SDG_region,count_basins_plus_2000_2004,count_basins_negative_2000_2004,count_basins_plus_2005_2009,count_basins_negative_2005_2009,count_basins_plus_2010_2014,count_basins_negative_2010_2014,count_basins_plus_2015_2019,count_basins_negative_2015_2019,count_basins_plus_2017_2021,count_basins_negative_2017_2021,total_basins
+Australia and New Zealand (M49),1,2,1,7,3,0,3,2,7,4,1025
+Central Asia (M49) and Southern Asia (MDG=M49),2,52,3,1,5,1,48,14,67,12,1607
+Eastern Asia (M49) and South-eastern Asia (MDG=M49),5,125,0,4,9,2,199,10,219,13,2224
+Latin America and the Caribbean (MDG=M49),10,68,15,1,4,0,51,56,61,59,2652
+Northern America (M49) and Europe (M49),37,48,3,15,18,6,92,31,127,63,6211
+Oceania (M49) excluding Australia and New Zealand (M49),0,0,0,0,0,0,1,0,1,0,101
+Others,0,0,0,0,0,0,0,0,0,0,10
+Sub-Saharan Africa (M49),19,17,2,1,12,1,37,46,53,48,3592
+Western Asia (M49) and Northern Africa (M49),3,25,0,1,7,0,39,7,35,19,1741
+World,77,337,24,30,58,10,470,166,570,218,19163

@@ -21,7 +21,7 @@ input_dir = Path("outputs_decision")
 if legend_extend:   
     maps_dir = input_dir / 'outputs' / 'maps_legend_extend'
 else:
-    maps_dir = input_dir / 'outputs' / 'maps_V1'
+    maps_dir = input_dir / 'outputs' / 'maps'
 
 # os.system(f"del {maps_dir}")
 maps_dir.mkdir(exist_ok=True, parents=True) 

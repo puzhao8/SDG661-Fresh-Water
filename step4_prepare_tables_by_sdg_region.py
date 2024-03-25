@@ -57,7 +57,7 @@ def count_by_peroid(group):
 
 """ Configuration """
 input_dir = Path("outputs_decision")
-save_dir = input_dir / 'outputs' / 'tables_by_SDG_region'
+save_dir = input_dir / 'outputs' / 'csv_by_SDG_region'
 save_dir.mkdir(exist_ok=True, parents=True) 
 
 
@@ -116,6 +116,8 @@ for folder in ['Permanent_water', 'Reservoirs']:
                         'count_basins_negative_2015_2019', 'count_basins_plus_2017_2021',
                         'count_basins_negative_2017_2021', 'total_basins']]
         df_count.loc['World'] = df_count.sum(axis=0)
-        df_count.to_excel(save_dir / f"{folder}_{area}.xlsx")
-        # df_count.to_excel(f"outputs_tables/{folder}_{area}.csv")
+
+
+        # df_count.to_excel(save_dir / f"{folder}_{area}.xlsx")
+        df_count.to_csv(save_dir / f"{folder}_{area}.csv")
 

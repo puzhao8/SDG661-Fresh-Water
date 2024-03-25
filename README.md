@@ -142,10 +142,10 @@ outputs_utest (with delta non-change masking) / \
 ## Maps
 
 outputs_decision_V1/outputs/maps/Permanent_water/permanent_area
-![image](outputs_decision_V1/outputs/maps/Permanent_water/permanent_area/basin6_2017_a_1.5_p_0.025.png)
+![image](outputs_decision/outputs/maps/Permanent_water/permanent_area/basin6_2017_a_1.5_p_0.025.png)
 
 outputs_decision_V1/outputs/maps/Reservoirs/permanent_area
-![image](outputs_decision_V1/outputs/maps/Reservoirs/permanent_area/basin6_2017_a_1.0_p_0.025.png)
+![image](outputs_decision/outputs/maps/Reservoirs/permanent_area/basin6_2017_a_1.0_p_0.025.png)
 
 
 ```python 

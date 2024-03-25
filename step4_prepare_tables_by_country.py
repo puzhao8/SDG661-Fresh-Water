@@ -61,14 +61,18 @@ save_dir = input_dir / 'outputs' / 'tables_by_country'
 save_dir.mkdir(exist_ok=True, parents=True) 
 
 
-gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+# gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+gdf = gpd.read_file("data/UNEP_Hydro/hybas_world_lv06_wmobb_update_20230203.shp")
 masked_basins = gpd.read_file("data\Masked__basins\SNow_Arid_Mask.shp")
 
 # country name
-country_name = pd.read_csv("data/SDG_region_link_table.csv", encoding='latin1')
+gdf_country = gpd.read_file("data/UNEP_Hydro/Countries_Separated_with_associated_territories_fix.shp")
+gdf_country['adm0_code'] = gdf_country['M49Code'].astype('Int64')
 
+SDG = pd.read_csv("data/SDG_region_link_table.csv", encoding='latin1')
 
-
+gdf_sdg = gdf_country.merge(SDG[['adm0_code', 'SDG_region']], on='adm0_code', how='left')
+gdf_sdg = gdf_sdg.rename(columns={'ROMNAM': 'adm0_name'})
 #%%
 
 """ count basins by country """
@@ -87,20 +91,22 @@ for folder in ['Permanent_water', 'Reservoirs']:
         utest['PFAF_ID'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[0]))
 
         # merge results with hydrobasin shape file
-        gdf_join = gdf.merge(utest, on='PFAF_ID', how='inner')
+        gdf_join = gdf[['id_bgl', 'geometry']].merge(utest, on='id_bgl', how='right')
 
         # apply basin masking based on data\Masked__basins\SNow_Arid_Mask.shp
         gdf_join = gdf_join[~gdf_join.PFAF_ID.isin(list(masked_basins.PFAF_ID_6.unique()))]
 
         # drop_duplicates
-        gdf_join = drop_duplicates_by_peroid(gdf_join)
+        if False:
+            gdf_join = drop_duplicates_by_peroid(gdf_join)
         # gdf_join = gdf_join.merge(country_name, on='adm0_code', how='right')
         # df_count = gdf_join.groupby(by='SDG_region').apply(count_by_peroid).reset_index().set_index('SDG_region').drop(columns=['level_1'])
         
         df_count = gdf_join.groupby(by='adm0_code').apply(count_by_peroid).reset_index().set_index('adm0_code').drop(columns=['level_1'])
 
         # merge: TODO: confirm how to handle the countries without data
-        df_delta = df_delta.merge(country_name, on='adm0_code', how='right')
+
+        df_delta = df_delta.merge(gdf_sdg, on='adm0_code', how='left')
         df_count = df_count.merge(df_delta, on='adm0_code', how='right')
 
 

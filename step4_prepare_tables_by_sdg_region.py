@@ -61,11 +61,18 @@ save_dir = input_dir / 'outputs' / 'tables_by_SDG_region'
 save_dir.mkdir(exist_ok=True, parents=True) 
 
 
-gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+# gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+gdf = gpd.read_file("data/UNEP_Hydro/hybas_world_lv06_wmobb_update_20230203.shp")
 masked_basins = gpd.read_file("data\Masked__basins\SNow_Arid_Mask.shp")
 
 # country name
-country_name = pd.read_csv("data/SDG_region_link_table.csv", encoding='latin1')
+gdf_country = gpd.read_file("data/UNEP_Hydro/Countries_Separated_with_associated_territories_fix.shp")
+gdf_country['adm0_code'] = gdf_country['M49Code'].astype('Int64')
+
+SDG = pd.read_csv("data/SDG_region_link_table.csv", encoding='latin1')
+
+gdf_sdg = gdf_country.merge(SDG[['adm0_code', 'SDG_region']], on='adm0_code', how='left')
+gdf_sdg = gdf_sdg.rename(columns={'ROMNAM': 'adm0_name'})
 
 
 #%%
@@ -86,15 +93,19 @@ for folder in ['Permanent_water', 'Reservoirs']:
         utest['PFAF_ID'] = utest['id_bgl'].transform(lambda x: eval(x.split("_")[0]))
 
         # merge results with hydrobasin shape file
-        gdf_join = gdf.merge(utest, on='PFAF_ID', how='inner')
+        # gdf_join = gdf.merge(utest, on='id_bgl', how='inner')
+        gdf_join = gdf[['id_bgl', 'geometry']].merge(utest, on='id_bgl', how='right')
 
         # apply basin masking based on data\Masked__basins\SNow_Arid_Mask.shp
         gdf_join = gdf_join[~gdf_join.PFAF_ID.isin(list(masked_basins.PFAF_ID_6.unique()))]
 
         # drop_duplicates
-        gdf_join = drop_duplicates_by_peroid(gdf_join)
+        if False:
+            gdf_join = drop_duplicates_by_peroid(gdf_join)
 
-        gdf_join = gdf_join.merge(country_name, on='adm0_code', how='right')
+        gdf_join = gdf_join.merge(gdf_sdg[['adm0_code', 'SDG_region']], on='adm0_code', how='left').rename(columns={'SDG_region_y': 'SDG_region'})
+        gdf_join.loc[:,'SDG_region'] = gdf_join.SDG_region.fillna('Others')
+
         df_count = gdf_join.groupby(by='SDG_region').apply(count_by_peroid).reset_index().set_index('SDG_region').drop(columns=['level_1'])
 
         df_count = df_count[[
@@ -104,7 +115,7 @@ for folder in ['Permanent_water', 'Reservoirs']:
                         'count_basins_negative_2010_2014', 'count_basins_plus_2015_2019',
                         'count_basins_negative_2015_2019', 'count_basins_plus_2017_2021',
                         'count_basins_negative_2017_2021', 'total_basins']]
-        
+        df_count.loc['World'] = df_count.sum(axis=0)
         df_count.to_excel(save_dir / f"{folder}_{area}.xlsx")
         # df_count.to_excel(f"outputs_tables/{folder}_{area}.csv")
 

@@ -16,15 +16,18 @@ save_flag = True
 csv_init_flag = True # csv initalization flag
 
 legend_extend = False # extend legend to include the number of total basins, dry basins, and mask basins
-input_dir = Path("outputs_decision_V1")
+input_dir = Path("outputs_decision")
 
 if legend_extend:   
     maps_dir = input_dir / 'outputs' / 'maps_legend_extend'
 else:
-    maps_dir = input_dir / 'outputs' / 'maps'
+    maps_dir = input_dir / 'outputs' / 'maps_V1'
 
 # os.system(f"del {maps_dir}")
 maps_dir.mkdir(exist_ok=True, parents=True) 
+
+# gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
+gdf = gpd.read_file("data/UNEP_Hydro/hybas_world_lv06_wmobb_update_20230203.shp")
 
 
 for folder in ['Permanent_water', 'Reservoirs']:
@@ -85,22 +88,22 @@ for folder in ['Permanent_water', 'Reservoirs']:
         # countries_filtered = countries[countries.geometry.apply(lambda x: x.bounds[0] > -100)]
         countries_flt = countries[countries.geometry.apply(lambda x: x.bounds[1] > -60)].to_crs('+proj=robin')
 
-        """ _dissolve: PFAF_ID_6 + Country ID """
-        gdf = gpd.read_file("data\hydrobasin_6\hydrobasin_6.shp")
-        gdf_join = gdf.merge(utest, on='PFAF_ID', how='inner').to_crs('+proj=robin')
+        """ _dissolve: PFAF_ID_6 + Country ID """        
+        gdf_join = gdf[['id_bgl', 'geometry']].merge(utest, on='id_bgl', how='right').to_crs('+proj=robin')
 
         masked_basins = gpd.read_file("data\Masked__basins\SNow_Arid_Mask.shp").to_crs('+proj=robin')
         num_before_basin_masking = gdf_join.shape[0]
 
         # apply basin masking based on data\Masked__basins\SNow_Arid_Mask.shp
-        gdf_join = gdf_join[~gdf_join.PFAF_ID.isin(list(masked_basins.PFAF_ID_6.unique()))]
+        if False:
+            gdf_join = gdf_join[~gdf_join.PFAF_ID.isin(list(masked_basins.PFAF_ID_6.unique()))]
 
         print(f"after applying masked_basins: {gdf_join.shape[0]}")
         num_of_masked_basins = num_before_basin_masking - len(gdf_join.PFAF_ID.unique())
         print(f"number of masked basins: {num_of_masked_basins}")
 
         # drop duplicates by column PFAF_ID
-        gdf_join = gdf_join.drop_duplicates(subset='PFAF_ID', keep=False) # newly added
+        # gdf_join = gdf_join.drop_duplicates(subset='PFAF_ID', keep=False) # newly added
 
         thd_low = gdf_join.thd_low.iloc[0]
         thd_high = gdf_join.thd_high.iloc[0]

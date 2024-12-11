@@ -75,17 +75,17 @@ if __name__ == "__main__":
   client = Client(cluster) # timeout
 
   
-  # 'Basin_map_SDG661_2024_indicators' (permanent water)
-  filename = 'Basin_map_SDG661_2024_indicators' 
-  property = 'basin6_Per'
+#   # 'Basin_map_SDG661_2024_indicators' (permanent water)
+#   filename = 'Basin_map_SDG661_2024_indicators' 
+#   property = 'basin6_Per'
 
   # 'River_flow_basins' 
   filename = 'River_flow_basins' 
-  property = 'level_6_2'
+  property = 'level_6__2'
 
-  # 'River_flow_basins' 
-  filename = 'Seasonal_water_basins' 
-  property = 'level_6_2'
+#   # 'River_flow_basins' 
+#   filename = 'Seasonal_water_basins' 
+#   property = 'level_6_2'
 
   keyIdx = 'PFAF_ID'
   npartitions = 10

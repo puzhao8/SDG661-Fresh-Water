@@ -38,3 +38,31 @@ df_2017 = df_decision[df_decision.start_year==2017]
 df_2017['PFAF_ID'] = df_2017.id_bgl.transform(lambda x: x.split('_')[0])
 
 df_2017
+
+
+#%%
+
+import pandas as pd
+
+pop = pd.read_csv("world_pop/basin_6_world_pop_2000_2020.csv")
+pop
+
+#%%
+
+yearList = [f"{i}" for i in range(2000, 2021)]
+cols_req = yearList + ['M49Code', 'PFAF_ID']
+pop.set_index('id_bgl')[cols_req].to_csv("world_pop_202412/basin6_worldpop_by_id_bgl.csv", index=True)
+
+#%% Group pop by PFAF_ID
+
+yearList = [f"{i}" for i in range(2000, 2021)]
+
+basin6_pop = pop.groupby("PFAF_ID")[yearList].sum().reset_index().astype(int)
+basin6_pop.to_csv("world_pop_202412/basin6_worldpop_by_PFAF_ID.csv", index=False)
+
+#%% Group pop by Country
+
+yearList = [f"{i}" for i in range(2000, 2021)]
+
+basin6_pop = pop.groupby("M49Code")[yearList].sum().reset_index().astype(int)
+basin6_pop.to_csv("world_pop_202412/worldpop_by_country.csv", index=False)

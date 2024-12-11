@@ -136,16 +136,17 @@ diff = set(pop.PFAF_ID.unique()) - set(perm_water.PFAF_ID.unique())
 #%%
 import ee 
 ee.Initialize()
+from pathlib import Path
 
-# # 'Basin_map_SDG661_2024_indicators' (permanent water)
-# filename = 'Basin_map_SDG661_2024_indicators' 
-# property = 'basin6_Per'
-
-# 'River_flow_basins' 
-filename = 'River_flow_basins' 
-property = 'level_6__2'
+# 'Basin_map_SDG661_2024_indicators' (permanent water)
+filename = 'Basin_map_SDG661_2024_indicators' 
+property = 'basin6_Per'
 
 # # 'River_flow_basins' 
+# filename = 'River_flow_basins' 
+# property = 'level_6__2'
+
+# # 'Seasonal_water_basins' 
 # filename = 'Seasonal_water_basins' 
 # property = 'basin6_Per'
 
@@ -169,7 +170,7 @@ len(obj_list)
 
 import dask.dataframe as dd
 
-filename = 'Basin_map_SDG661_2024_indicators'
+filename = 'River_flow_basins'
 ddf = dd.read_csv(f"world_pop/{filename}/partition_*.csv", 
                       on_bad_lines='skip', 
                       assume_missing=True) 
